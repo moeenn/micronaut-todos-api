@@ -1,12 +1,11 @@
 package micronaut.sandbox.module.task;
 
-import java.util.List;
-import java.util.Optional;
 
+import java.util.Optional;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotBlank;
-import micronaut.sandbox.module.task.request.TaskAddRequest;
-import micronaut.sandbox.module.task.request.TaskUpdateTitleRequest;
+import micronaut.sandbox.module.task.dto.TaskAddUpdateDTO;
+import micronaut.sandbox.module.task.dto.TaskListDTO;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -27,22 +26,21 @@ public class TaskController {
   }
 
   @Get
-  public List<Task> index() {
-    return this.taskRepository.listTasks();
+  public TaskListDTO index() {
+    return new TaskListDTO(this.taskRepository.listTasks());
   }
 
   @Post
   @Validated
-  public Task addTask(@Body TaskAddRequest req) {
+  public Task addTask(@Body TaskAddUpdateDTO req) {
     return this.taskRepository.addTask(req.title);
   }
 
   @Put("/{id}/title")
   @Validated
-  public HttpResponse<Task> updateTaskTitle(@NotBlank @PathVariable String id, @Body TaskUpdateTitleRequest req) {
+  public HttpResponse<Task> updateTaskTitle(@NotBlank @PathVariable String id, @Body TaskAddUpdateDTO req) {
     Optional<Task> updatedTask = this.taskRepository.updateTaskTitle(id, req.title);
     if (updatedTask.isEmpty()) {
-      // TODO: return actual error message
       return HttpResponse.badRequest();
     }
 
@@ -54,7 +52,6 @@ public class TaskController {
   public HttpResponse<Task> toggleTaskDone(@NotBlank @PathVariable String id) {
     Optional<Task> updatedTask = this.taskRepository.toggleTaskDone(id);
     if (updatedTask.isEmpty()) {
-      // TODO: return actual error message
       return HttpResponse.badRequest();
     }
 

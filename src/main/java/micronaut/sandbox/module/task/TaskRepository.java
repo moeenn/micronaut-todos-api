@@ -11,13 +11,7 @@ public class TaskRepository {
   private List<Task> tasks;
 
   public TaskRepository() {
-    this.tasks = new ArrayList<Task>() {
-      {
-        add(new Task("Task one"));
-        add(new Task("Task two"));
-        add(new Task("Task three"));
-      }
-    };
+    this.tasks = new ArrayList<Task>();
   }
 
   public List<Task> listTasks() {
@@ -50,7 +44,7 @@ public class TaskRepository {
   public Optional<Task> toggleTaskDone(String id) {
     Optional<Task> task = this.findById(id);
     if (task.isPresent()) {
-      task.get().setDone(!task.get().getDone());
+      task.get().toggleDone();
     }
 
     return task;
